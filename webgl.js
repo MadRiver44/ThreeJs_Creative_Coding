@@ -10,6 +10,9 @@ require("three/examples/js/controls/OrbitControls");
 const canvasSketch = require("canvas-sketch");
 
 const settings = {
+  dimensions: [512, 512],
+  fps: 24,
+  duration: 4,
   // Make the loop animated,
   animate: true,
   // Get a WebGL canvas rather than 2D
@@ -25,8 +28,8 @@ const sketch = ({ context }) => {
   });
 
   // WebGL background color. deep black
-  // renderer.setClearColor("#000", 1);
-  renderer.setClearColor('hsl(0, 0%, 95%)', 1.0)
+  renderer.setClearColor("#000", 1);
+  // renderer.setClearColor('hsl(0, 0%, 95%)', 1.0)
 
   // Setup a camera
   const camera = new THREE.OrthographicCamera();
@@ -53,11 +56,11 @@ const sketch = ({ context }) => {
   // Setup a mesh with geometry + material
   const mesh = new THREE.Mesh(
     geometry,
-    new THREE.MeshBasicMaterial({
+    new THREE.MeshStandardMaterial({
       color: random.pick(palette)
     })
   )
-  
+
   mesh.position.set(
     random.range(-1, 1),
     random.range(-1, 1),
@@ -74,6 +77,12 @@ const sketch = ({ context }) => {
   scene.add(mesh);
  }
 
+ scene.add(new THREE.AmbientLight('hsl(214, 20%, 50%)'))
+
+ const light = new THREE.DirectionalLight('white', 1)
+ light.position.set(0, 0, 4)
+ scene.add(light)
+
   // draw each frame
   return {
     // Handle resize events here
@@ -84,7 +93,7 @@ const sketch = ({ context }) => {
       const aspect = viewportWidth / viewportHeight;
 
       // Ortho zoom
-      const zoom = 1.5;
+      const zoom = 1.75;
 
       // Bounds
       camera.left = -zoom * aspect;
@@ -107,10 +116,21 @@ const sketch = ({ context }) => {
       camera.updateProjectionMatrix();
     },
     // Update & render your scene here
-    render({ time }) {
+    // playhead vs time , playhead for a gif to restart the animation at the exact same point on loop restart
+    render({ playhead }) {
       // mesh.rotation.y = time * (10 * Math.PI / 100)
       // mesh.rotation.x = time * (10 * Math.PI / 100)
       // controls.update();
+      // makes loop seam perfectly
+        //  to make a gif and export:
+          // quit terminal
+          // in terminal run: canvas-sketch <filename(webgl.js)>  --output=tmp/
+          // cmd s, in browser to make sure
+          // cmd shft s, exports all the frames
+          // make sure ffmpeg is intalled
+          // run, canvas-sketch-mp4 tmp/
+           // else use giftool in repo to create
+      scene.rotation.z = playhead * Math.PI * 2
       renderer.render(scene, camera);
     },
     // Dispose of events & renderer for cleaner hot-reloading
