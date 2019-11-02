@@ -1,6 +1,8 @@
 // const canvasSketch = require('canvas-sketch')
 const random = require('canvas-sketch-util/random')
 const palettes = require('nice-color-palettes')
+const eases = require('eases')
+const BezierEasing = require('bezier-easing')
 // Ensure ThreeJS is in global scope for the 'examples/'
 global.THREE = require("three");
 
@@ -28,8 +30,8 @@ const sketch = ({ context }) => {
   });
 
   // WebGL background color. deep black
-  renderer.setClearColor("#000", 1);
-  // renderer.setClearColor('hsl(0, 0%, 95%)', 1.0)
+  // renderer.setClearColor("#000", 1);
+  renderer.setClearColor('hsl(0, 0%, 95%)', 1.0)
 
   // Setup a camera
   const camera = new THREE.OrthographicCamera();
@@ -83,6 +85,8 @@ const sketch = ({ context }) => {
  light.position.set(0, 0, 4)
  scene.add(light)
 
+  const easeFn = BezierEasing(0.67, 0.03, 0.29, 0.99)
+
   // draw each frame
   return {
     // Handle resize events here
@@ -130,7 +134,10 @@ const sketch = ({ context }) => {
           // make sure ffmpeg is intalled
           // run, canvas-sketch-mp4 tmp/
            // else use giftool in repo to create
-      scene.rotation.z = playhead * Math.PI * 2
+      // for more interesting rotations, use trigonomic functions
+      // const t = Math.sin(playhead * Math.PI * 2) * 2
+      const t = Math.sin(playhead * Math.PI)
+      scene.rotation.z = easeFn(t)
       renderer.render(scene, camera);
     },
     // Dispose of events & renderer for cleaner hot-reloading
