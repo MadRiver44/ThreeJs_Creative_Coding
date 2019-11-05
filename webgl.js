@@ -12,7 +12,7 @@ require("three/examples/js/controls/OrbitControls");
 const canvasSketch = require("canvas-sketch");
 
 const settings = {
-  dimensions: [512, 512],
+  dimensions: [2048, 2048],
   fps: 24,
   duration: 4,
   // Make the loop animated,
@@ -75,7 +75,7 @@ const sketch = ({ context }) => {
      random.range(-1, 1)
    )
 
-  mesh.scale.multiplyScalar(0.25)
+  mesh.scale.multiplyScalar(0.45)
   scene.add(mesh);
  }
 
